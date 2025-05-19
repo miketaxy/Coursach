@@ -1,20 +1,21 @@
+import bcrypt from "bcryptjs";
 import prisma from "@/app/lib/db";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const { username, password } = await request.json();
 
-    if (!email || !password) {
+    if (!username || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "username and password are required" },
         { status: 400 }
       );
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { username },
     });
 
     if (existingUser) {
@@ -23,17 +24,17 @@ export async function POST(request: Request) {
         { status: 409 }
       );
     }
+    const hashPassword = bcrypt.hashSync(password, 10);
 
     const newUser = await prisma.user.create({
       data: {
-        email,
-        password,
-        name: "default_username",
+        password: hashPassword,
+        username: "default_userusername",
       },
     });
 
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.email },
+      { id: newUser.id, username: newUser.username },
       process.env.JWT_SECRET as string
     );
 

@@ -9,16 +9,32 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  email     String   @unique
-  name      String
-  role      Role     @default(GUEST)
-  password  String
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique
+  role               Role                 @default(GUEST)
+  password           String
+  SelectedTravelItem SelectedTravelItem[]
 }
 
 enum Role {
   GUEST
   USER
   ADMIN
+}
+
+model TravelItem {
+  id                 Int                  @id @default(autoincrement())
+  description        String?
+  Title              String
+  Image              String?
+  Price              Float
+  SelectedTravelItem SelectedTravelItem[]
+}
+
+model SelectedTravelItem {
+  id           Int         @id @default(autoincrement())
+  travelItem   TravelItem? @relation(fields: [travelItemId], references: [id])
+  travelItemId Int?
+  user         User?       @relation(fields: [userId], references: [id])
+  userId       Int?
 }
