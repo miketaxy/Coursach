@@ -1,6 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import TravelItems from "../travel-items/TravelItems.component";
 import classes from "./Travel.module.css";
 export default function Travel() {
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   return (
     <div>
       <div className="w-full flex flex-col items-center justify-center">
@@ -14,7 +18,22 @@ export default function Travel() {
           Тури, які ми пропонуємо
         </h2>
       </div>
-      <TravelItems />
+
+      <div className="w-4/5">
+        <span className="flex justify-self-end gap-2">
+          <label htmlFor="favorite">Обране</label>
+          <input
+            id="favorite"
+            type="checkbox"
+            checked={isFavorite}
+            onChange={(e) => {
+              setIsFavorite(e.target.checked);
+            }}
+          />
+        </span>
+      </div>
+
+      <TravelItems isFavorite={isFavorite} />
     </div>
   );
 }
